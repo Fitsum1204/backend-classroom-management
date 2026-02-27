@@ -5,7 +5,7 @@ import { db } from '../db';
 
 const router =express.Router();
 
-//Get aall subjects with optional search, filter and pagination
+//Get all subjects with optional search, filter and pagination
 router.get('/',async (req, res) => {
     try {
        const{ search, departement, page = 1, limit = 10 } = req.query;
