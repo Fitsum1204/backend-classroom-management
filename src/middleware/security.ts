@@ -48,7 +48,7 @@ const securityMiddleware = async (req: Request, res: Response, next: NextFunctio
                     return res.status(403).json({ error: 'Access denied. Shield        traffic is not allowed.' });
                 }
                 if (decision.isDenied() && decision.reason.isRateLimit()) {
-                    return res.status(403).json({ error: 'Access denied. Rate limit        exceeded.' });
+                    return res.status(429).json({ error: 'Access denied. Rate limit        exceeded.' });
                 }
                 next();
     } catch (e) {
