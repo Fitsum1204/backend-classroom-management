@@ -1,6 +1,6 @@
 import { and, ilike, or, sql, eq, getTableColumns } from 'drizzle-orm';
 import express from 'express';
-import { departements, subjects } from '../db/schema';
+import { departments, subjects } from '../db/schema';
 import { db } from '../db';
 
 const router = express.Router();
@@ -8,11 +8,11 @@ const router = express.Router();
 //Get aall subjects with optional search, filter and pagination
 router.get('/', async (req, res) => {
   try {
-    const { search, departement, page, limit } = req.query;
+    const { search, department, page, limit } = req.query;
 
     if (
       Array.isArray(search) ||
-      Array.isArray(departement) ||
+      Array.isArray(department) ||
       Array.isArray(page) ||
       Array.isArray(limit)
     ) {
@@ -25,8 +25,8 @@ router.get('/', async (req, res) => {
       return res.status(400).json({ error: 'Search must be a string.' });
     }
 
-    if (departement !== undefined && typeof departement !== 'string') {
-      return res.status(400).json({ error: 'Departement must be a string.' });
+    if (department !== undefined && typeof department !== 'string') {
+      return res.status(400).json({ error: 'Department must be a string.' });
     }
 
     const parsedPage = page === undefined ? 1 : Number(page);
@@ -68,9 +68,9 @@ router.get('/', async (req, res) => {
         ),
       );
     }
-    //if departement query exits ,filter by departement id
-    if (departement) {
-      filterConditions.push(ilike(departements.name, `%${departement}%`));
+    //if department query exits ,filter by department id
+    if (department) {
+      filterConditions.push(ilike(departments.name, `%${department}%`));
     }
 
     //combine all filter conditions using AND operator
@@ -80,17 +80,17 @@ router.get('/', async (req, res) => {
     const countResult = await db
       .select({ count: sql<number>`count(*)` })
       .from(subjects)
-      .leftJoin(departements, eq(subjects.departmentId, departements.id))
+      .leftJoin(departments, eq(subjects.departmentId, departments.id))
       .where(whereClause);
     const totalCount = countResult[0]?.count || 0;
 
     const subjectList = await db
       .select({
         ...getTableColumns(subjects),
-        departement: { ...getTableColumns(departements) },
+        department: { ...getTableColumns(departments) },
       })
       .from(subjects)
-      .leftJoin(departements, eq(subjects.departmentId, departements.id))
+      .leftJoin(departments, eq(subjects.departmentId, departments.id))
       .where(whereClause)
       .limit(limitPage)
       .offset(offset);
