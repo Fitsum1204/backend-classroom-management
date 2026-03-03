@@ -3,6 +3,7 @@ import { eq } from 'drizzle-orm';
 import { subjects } from './db/schema';
 import subjectsRouter from './route/subjects';
 import cors from 'cors';
+import securityMiddleware from './middleware/security';
 const app = express();
 const PORT = 8000;
 app.use(cors({
@@ -12,6 +13,8 @@ app.use(cors({
     credentials: true,
 }));
 app.use(express.json());
+
+app.use(securityMiddleware);
 
 app.get('/', (req, res) => {
   res.send('Server is running!');
