@@ -6,7 +6,7 @@ const securityMiddleware = async (req: Request, res: Response, next: NextFunctio
         return next();
     }
     try {
-         const role:RateLimitRole = req.user?.role ?? 'gust';    
+          const role: RateLimitRole = req.user?.role ?? 'guest';   
         let limit:number;
         let message:string;
         switch (role) {
@@ -23,7 +23,7 @@ const securityMiddleware = async (req: Request, res: Response, next: NextFunctio
                 message = 'Student rate limit exceeded. Please try again later.';
                 break;
             case 'guest':
-                limit = 1; // 10 requests per minute for guest
+                limit = 10; // 10 requests per minute for guest
                 message = 'Guest rate limit exceeded. Please try again later.';
                 break;} 
                 const client = aj.withRule(
@@ -48,7 +48,7 @@ const securityMiddleware = async (req: Request, res: Response, next: NextFunctio
                     return res.status(403).json({ error: 'Access denied. Shield        traffic is not allowed.' });
                 }
                 if (decision.isDenied() && decision.reason.isRateLimit()) {
-                    return res.status(403).json({ error: 'Access denied. Rate limit        exceeded.' });
+                    return res.status(429).json({ error: 'Access denied. Rate limit        exceeded.' });
                 }
                 next();
     } catch (e) {
