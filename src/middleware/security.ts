@@ -2,7 +2,9 @@ import { Request, Response, NextFunction } from 'express';
 import {aj} from '../config/arcjet';
 import { ArcjetNodeRequest, slidingWindow } from '@arcjet/node';
 const securityMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-    if (process.env.NODE_ENV === 'test') {
+    // Arcjet fingerprinting can fail in local/dev environments
+    // where client IP metadata is not available.
+    if (process.env.NODE_ENV !== 'production') {
         return next();
     }
     try {
