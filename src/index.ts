@@ -1,11 +1,14 @@
+import 'dotenv/config';
 import express from 'express';
 import { eq } from 'drizzle-orm';
 import { subjects } from './db/schema';
 import subjectsRouter from './route/subjects';
+import usersRouter from './route/users';
 import cors from 'cors';
 import securityMiddleware from './middleware/security';
 import {toNodeHandler} from "better-auth/node"
 import { auth } from './lib/auth';
+import classesRouter from './route/classes';
 const app = express();
 const PORT = 8000;
 app.use(cors({
@@ -26,6 +29,8 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/subjects', subjectsRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/classes', classesRouter);
 
 app.listen(PORT, () => {
   const url = `http://localhost:${PORT}/`;
